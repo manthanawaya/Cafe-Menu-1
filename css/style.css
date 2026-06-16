@@ -59,6 +59,8 @@ body {
   line-height: 1.5;
   overflow-x: clip;
   min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
   padding-left: var(--safe-left);
   padding-right: var(--safe-right);
   padding-bottom: var(--safe-bottom);
@@ -75,6 +77,9 @@ a { color: inherit; }
   width: 100%;
   max-width: 100%;
   padding-top: calc(var(--header-height) + var(--safe-top));
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
 }
 
 /* ----------------------------------------------------------
@@ -129,20 +134,13 @@ a { color: inherit; }
   -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
   transition: background-color 0.3s, border-color 0.3s;
 }
-.brand, .detail-brand {
-  font-size: clamp(18px, 4.5vw, 23px);
-  font-weight: 700;
-  color: var(--color-primary);
-  letter-spacing: -0.03em;
+.detail-brand {
   font-family: 'Inter', -apple-system, sans-serif;
+  color: var(--color-primary);
   min-width: 0;
   display: flex;
   align-items: center;
   gap: 8px;
-}
-.brand::before {
-  content: "🍽️";
-  font-size: 18px;
 }
 .detail-brand {
   font-size: clamp(11px, 2.8vw, 14px);
@@ -1012,4 +1010,233 @@ a { color: inherit; }
   .menu-card:hover .card-img img {
     transform: none;
   }
+}
+
+/* ----------------------------------------------------------
+   24. NEW HEADER & BADGE STYLES
+   ---------------------------------------------------------- */
+.brand-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-logo-emoji {
+  font-size: 24px;
+  animation: float 3s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.brand-text-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.brand-name {
+  font-size: clamp(17px, 4.2vw, 21px);
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.brand-subtitle {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-on-surface-variant);
+  margin-top: 1px;
+}
+
+.header-badges {
+  display: none;
+  gap: 8px;
+  align-items: center;
+}
+@media (min-width: 580px) {
+  .header-badges {
+    display: flex;
+  }
+}
+.table-badge {
+  background-color: rgba(31, 41, 55, 0.05);
+  border: 1px solid rgba(31, 41, 55, 0.08);
+  color: var(--color-primary);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.veg-pure-badge {
+  background-color: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #10B981;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ----------------------------------------------------------
+   25. APP FOOTER
+   ---------------------------------------------------------- */
+.app-footer {
+  background-color: var(--color-surface-container);
+  border-top: 1px solid rgba(31, 41, 55, 0.08);
+  padding: 48px max(var(--page-gutter), var(--safe-right)) calc(48px + var(--safe-bottom)) max(var(--page-gutter), var(--safe-left));
+  margin-top: auto;
+  color: var(--color-on-surface-variant);
+  font-size: 14px;
+  width: 100%;
+}
+
+.footer-content {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1.5fr 1fr 1fr;
+  }
+}
+
+.footer-brand-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-brand-logo {
+  font-size: 20px;
+}
+
+.footer-tagline {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-on-surface-variant);
+  max-width: 320px;
+}
+
+.footer-veg-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #10B981;
+  font-weight: 600;
+  font-size: 12px;
+  background: rgba(16, 185, 129, 0.08);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  align-self: flex-start;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.footer-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: 16px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: var(--color-on-surface-variant);
+  transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-links a:hover {
+  color: var(--color-secondary);
+}
+
+.footer-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-style: normal;
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.footer-contact-icon {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.footer-bottom {
+  max-width: var(--content-max-width);
+  margin: 32px auto 0;
+  padding-top: 24px;
+  border-top: 1px solid rgba(31, 41, 55, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #888;
+}
+
+@media (min-width: 640px) {
+  .footer-bottom {
+    flex-direction: row;
+  }
+}
+
+.footer-payment-icons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.payment-badge {
+  background: var(--color-card-surface);
+  border: 1px solid rgba(31, 41, 55, 0.08);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-on-surface-variant);
+  letter-spacing: 0.02em;
 }

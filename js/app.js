@@ -866,6 +866,54 @@ function labelClass(label) {
   }
 }
 
+// --------------- FOOTER HELPER ---------------
+
+function buildAppFooterHtml() {
+  return `
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div class="footer-brand-section">
+        <div class="footer-brand">
+          <span class="footer-brand-logo">🍽️</span>
+          <span>Krishna's Cafe</span>
+        </div>
+        <p class="footer-tagline">Serving freshly prepared, mouth-watering street food, delicious momos, sizzling maggi, and Chinese delicacies since 2020.</p>
+        <span class="footer-veg-warning">🟢 100% Vegetarian Menu</span>
+      </div>
+      <div>
+        <h3 class="footer-section-title">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="#" onclick="event.preventDefault(); currentCategory='All'; renderMenu();">View All Menu</a></li>
+          <li><a href="#" onclick="event.preventDefault(); currentCategory='Chinese'; renderMenu();">Chinese Specials</a></li>
+          <li><a href="#" onclick="event.preventDefault(); currentCategory='Momos'; renderMenu();">Momo Station</a></li>
+          <li><a href="tel:+919876543210">📞 Call Us to Order</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-section-title">Contact & Timing</h3>
+        <address class="footer-contact-info">
+          <div class="footer-contact-item">
+            <span class="footer-contact-icon">📍</span>
+            <span>Opp. University Main Gate,<br>Sector 4, City Centre</span>
+          </div>
+          <div class="footer-contact-item">
+            <span class="footer-contact-icon">⏰</span>
+            <span>Open Daily:<br>11:00 AM — 11:00 PM</span>
+          </div>
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Krishna's Cafe. All Rights Reserved. Designed with &hearts;</p>
+      <div class="footer-payment-icons">
+        <span class="payment-badge">UPI</span>
+        <span class="payment-badge">CARD</span>
+        <span class="payment-badge">CASH</span>
+      </div>
+    </div>
+  </footer>`;
+}
+
 // --------------- MENU VIEW ---------------
 
 function renderMenu() {
@@ -883,7 +931,13 @@ function renderMenu() {
   html += `
   <header class="app-header">
     <div class="header-left">
-      <span class="brand">Krishna's Cafe</span>
+      <div class="brand-container">
+        <span class="brand-logo-emoji">🍽️</span>
+        <div class="brand-text-wrap">
+          <span class="brand-name">Krishna's Cafe</span>
+          <span class="brand-subtitle">Fresh Food, Great Taste • 🟢 100% Veg</span>
+        </div>
+      </div>
     </div>
     <nav class="header-nav desktop-only">
       ${categories.map(c => `
@@ -923,6 +977,9 @@ function renderMenu() {
 
   // ── Dish listing ──
   html += renderMenuListingHtml(filtered);
+
+  // ── App Footer ──
+  html += buildAppFooterHtml();
 
   // ── Insert ──
   app.innerHTML = html;
@@ -1167,6 +1224,9 @@ function showDishDetail(dishId) {
 
   html += `</div>`; // .detail-info
   html += `</div>`; // .detail-layout
+
+  // ── App Footer ──
+  html += buildAppFooterHtml();
 
   // ── Insert ──
   app.innerHTML = html;
