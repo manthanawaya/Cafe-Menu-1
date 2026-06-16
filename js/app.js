@@ -708,7 +708,12 @@ let currentCategory = 'All';
 let currentDishId = null;
 let searchQuery = '';
 let selectedRating = 0;         // interactive rating widget value
-let isMobile = window.innerWidth < 1024;
+const LIST_LAYOUT_QUERY = window.matchMedia('(max-width: 767px)');
+let listLayout = LIST_LAYOUT_QUERY.matches;
+
+function usesListLayout() {
+  return LIST_LAYOUT_QUERY.matches;
+}
 
 // --------------- RATINGS HELPERS ---------------
 
@@ -766,21 +771,73 @@ function renderStars(rating, size = 'small') {
 
 // --------------- FILTERING ---------------
 
+const SEARCH_ALIASES = {
+  maggi: ['maggie'],
+  momo: ['momos'],
+  fries: ['french'],
+  fry: ['fries', 'french'],
+  rice: ['pulao', 'fried'],
+  noodle: ['noodles', 'hakka'],
+  noodles: ['noodle', 'hakka'],
+  chinese: ['hakka', 'manchurian', 'schezwan'],
+  sandwich: ['sandwiches'],
+  veg: ['vegetable'],
+  veggie: ['vegetable', 'veg'],
+  chilli: ['chili'],
+  chili: ['chilli'],
+  protein: ['high protein'],
+};
+
+function normalizeSearchText(text) {
+  return String(text || '')
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getDishSearchText(dish) {
+  const parts = [
+    dish.name,
+    dish.category,
+    dish.description,
+    dish.detailDescription,
+    dish.label,
+    ...(dish.tags || []),
+    ...(dish.components || []).flatMap(c => [c.type, c.name, c.desc]),
+  ];
+  return normalizeSearchText(parts.join(' '));
+}
+
+function tokenMatchesHaystack(token, haystack) {
+  const variants = new Set([token]);
+  (SEARCH_ALIASES[token] || []).forEach(v => variants.add(v));
+  if (token.endsWith('s') && token.length > 3) variants.add(token.slice(0, -1));
+  else variants.add(`${token}s`);
+
+  return [...variants].some(v => haystack.includes(v));
+}
+
+function dishMatchesSearch(dish, query) {
+  const haystack = getDishSearchText(dish);
+  const tokens = normalizeSearchText(query).split(' ').filter(Boolean);
+  if (tokens.length === 0) return true;
+  return tokens.every(token => tokenMatchesHaystack(token, haystack));
+}
+
 /**
  * Return dishes matching the current category + search query.
  */
 function filterDishes() {
   let filtered = dishes;
 
-  // Category filter ('All' shows everything)
   if (currentCategory !== 'All') {
     filtered = filtered.filter(d => d.category === currentCategory);
   }
 
-  // Search filter (case-insensitive on name)
   if (searchQuery.trim()) {
-    const q = searchQuery.trim().toLowerCase();
-    filtered = filtered.filter(d => d.name.toLowerCase().includes(q));
+    filtered = filtered.filter(d => dishMatchesSearch(d, searchQuery));
   }
 
   return filtered;
@@ -839,11 +896,6 @@ function renderMenu() {
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
       </button>
-      <button class="icon-btn hamburger mobile-only" id="hamburgerBtn" aria-label="Menu">
-        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
     </div>
   </header>`;
 
@@ -854,7 +906,7 @@ function renderMenu() {
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <input type="text" id="searchInput" placeholder="Search dishes..." value="${searchQuery}" autocomplete="off" />
+      <input type="text" id="searchInput" placeholder="Search by dish, category, or ingredient..." value="${searchQuery}" autocomplete="off" />
       <button class="icon-btn" id="searchCloseBtn" aria-label="Close search">&times;</button>
     </div>
   </div>`;
@@ -870,82 +922,7 @@ function renderMenu() {
   </div>`;
 
   // ── Dish listing ──
-  if (filtered.length === 0) {
-    html += `<div class="empty-state"><p>No dishes found.</p></div>`;
-  } else if (isMobile) {
-    // ---------- MOBILE: list layout ----------
-    html += `<div class="menu-list">`;
-    filtered.forEach(dish => {
-      const { average, count } = getAverageRating(dish.id);
-      html += `
-      <div class="menu-item" data-id="${dish.id}">
-        <div class="menu-item-img">
-          <img src="${dish.image}" alt="${dish.name}" loading="lazy" ${imgErrorHandler()} />
-          ${dish.label ? `<span class="dish-label ${labelClass(dish.label)}">${dish.label}</span>` : ''}
-        </div>
-        <div class="menu-item-info">
-          <h3 class="dish-name">${dish.name}</h3>
-          <p class="dish-desc">${dish.description}</p>
-          <div class="dish-meta">
-            <span class="dish-price">₹${dish.price}</span>
-            <span class="dish-rating">${renderStars(average)} <span class="rating-count">(${count})</span></span>
-          </div>
-          <div class="dish-tags">
-            ${dish.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-          </div>
-        </div>
-      </div>`;
-    });
-    html += `</div>`;
-  } else {
-    // ---------- DESKTOP: card grid ----------
-    html += `<div class="menu-grid">`;
-    filtered.forEach(dish => {
-      const { average, count } = getAverageRating(dish.id);
-      html += `
-      <div class="menu-card" data-id="${dish.id}">
-        <div class="card-img">
-          <img src="${dish.image}" alt="${dish.name}" loading="lazy" ${imgErrorHandler()} />
-          ${dish.label ? `<span class="dish-label ${labelClass(dish.label)}">${dish.label}</span>` : ''}
-        </div>
-        <div class="card-body">
-          <h3 class="dish-name">${dish.name}</h3>
-          <p class="dish-desc">${dish.description}</p>
-          <div class="dish-meta">
-            <span class="dish-price">₹${dish.price}</span>
-            <span class="dish-rating">${renderStars(average)} <span class="rating-count">(${count})</span></span>
-          </div>
-          <div class="dish-tags">
-            ${dish.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-          </div>
-        </div>
-      </div>`;
-    });
-    html += `</div>`;
-  }
-
-  // ── Bottom Nav (mobile only) ──
-  html += `
-  <nav class="bottom-nav mobile-only">
-    <button class="bottom-nav-item active" data-nav="menu">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M4 6h16M4 12h16M4 18h16"/>
-      </svg>
-      <span>Menu</span>
-    </button>
-    <button class="bottom-nav-item" data-nav="reviews">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-      </svg>
-      <span>Reviews</span>
-    </button>
-    <button class="bottom-nav-item" data-nav="cart">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
-      </svg>
-      <span>Cart</span>
-    </button>
-  </nav>`;
+  html += renderMenuListingHtml(filtered);
 
   // ── Insert ──
   app.innerHTML = html;
@@ -978,46 +955,31 @@ function renderMenu() {
     searchInput.value = '';
     renderMenu();
   });
+  searchOverlay.addEventListener('click', (e) => {
+    if (e.target === searchOverlay) searchOverlay.classList.remove('open');
+  });
+
+  if (searchQuery.trim()) {
+    searchOverlay.classList.add('open');
+  }
 
   // Live search filtering
   searchInput.addEventListener('input', (e) => {
     searchQuery = e.target.value;
-    // Re-render only the dish listing (keep overlay open)
-    const filtered2 = filterDishes();
-    const listContainer = app.querySelector('.menu-list') || app.querySelector('.menu-grid');
-    if (listContainer) {
-      listContainer.innerHTML = buildDishCards(filtered2);
-      attachDishClickListeners();
-    }
+    updateMenuListing(app, filterDishes());
   });
-
-  // Hamburger (just toggles the search on mobile for now)
-  const hamburgerBtn = document.getElementById('hamburgerBtn');
-  if (hamburgerBtn) {
-    hamburgerBtn.addEventListener('click', () => {
-      searchOverlay.classList.toggle('open');
-      if (searchOverlay.classList.contains('open')) searchInput.focus();
-    });
-  }
-
-  // Bottom nav active state
-  app.querySelectorAll('.bottom-nav-item').forEach(btn => {
-    btn.addEventListener('click', () => {
-      app.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    });
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') searchOverlay.classList.remove('open');
   });
 }
 
 // --------------- HELPER: Build dish cards/items HTML ---------------
 
 function buildDishCards(list) {
-  if (list.length === 0) return '<div class="empty-state"><p>No dishes found.</p></div>';
-
   let html = '';
   list.forEach(dish => {
     const { average, count } = getAverageRating(dish.id);
-    if (isMobile) {
+    if (listLayout) {
       html += `
       <div class="menu-item" data-id="${dish.id}">
         <div class="menu-item-img">
@@ -1058,6 +1020,31 @@ function buildDishCards(list) {
     }
   });
   return html;
+}
+
+function renderMenuListingHtml(filtered) {
+  if (filtered.length === 0) {
+    return '<div class="empty-state"><p>No dishes found.</p></div>';
+  }
+  const wrapperClass = listLayout ? 'menu-list' : 'menu-grid';
+  return `<div class="${wrapperClass}">${buildDishCards(filtered)}</div>`;
+}
+
+/** Replace the menu listing area without rebuilding the whole page. */
+function updateMenuListing(app, filtered) {
+  const anchor = app.querySelector('.category-tabs') || app.querySelector('.search-overlay');
+  const existing = app.querySelector('.menu-list, .menu-grid, .empty-state');
+  const html = renderMenuListingHtml(filtered);
+
+  if (existing) {
+    existing.outerHTML = html;
+  } else if (anchor) {
+    anchor.insertAdjacentHTML('afterend', html);
+  } else {
+    app.insertAdjacentHTML('beforeend', html);
+  }
+
+  attachDishClickListeners();
 }
 
 /** Re-attach click listeners on dynamically rebuilt dish cards */
@@ -1297,16 +1284,15 @@ function submitRating(dishId) {
 
 // --------------- RESIZE HANDLER ---------------
 
-function handleResize() {
-  const wasMobile = isMobile;
-  isMobile = window.innerWidth < 1024;
-  // Only re-render if breakpoint actually crossed
-  if (wasMobile !== isMobile) {
-    if (currentView === 'detail' && currentDishId) {
-      showDishDetail(currentDishId);
-    } else {
-      renderMenu();
-    }
+function handleLayoutChange() {
+  const prev = listLayout;
+  listLayout = usesListLayout();
+  if (prev === listLayout) return;
+
+  if (currentView === 'detail' && currentDishId) {
+    showDishDetail(currentDishId);
+  } else {
+    renderMenu();
   }
 }
 
@@ -1321,12 +1307,7 @@ function initApp() {
   // Initial render
   renderMenu();
 
-  // Resize listener (debounced)
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(handleResize, 150);
-  });
+  LIST_LAYOUT_QUERY.addEventListener('change', handleLayoutChange);
 }
 
 // Boot when DOM is ready
