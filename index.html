@@ -1,24 +1,692 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#f9f9f9">
-    <meta name="color-scheme" content="light">
-    <title>Krishna's Cafe — Menu</title>
-    <meta name="description" content="Browse Krishna's Cafe menu. Maggie, momos, sandwiches, chole bhature, rice, and Chinese favourites. View ingredients, ratings, and prices.">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishna's Cafe — High-Fidelity Design Showcase</title>
+    <meta name="description"
+        content="Explore the high-fidelity interactive UI/UX design mockup of the digital QR code food menu for Krishna's Cafe across smartphone, tablet, and laptop screens.">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+
+    <style>
+        /* ============================================================
+           SHOWCASE DASHBOARD DESIGN SYSTEM
+           ============================================================ */
+        :root {
+            --bg-showcase: #0F172A;
+            /* Slate 900 for premium contrast */
+            --bg-toolbar: rgba(30, 41, 59, 0.7);
+            /* Slate 800 with transparency */
+            --accent-showcase: #F59E0B;
+            /* Golden Amber */
+            --text-main: #F8FAFC;
+            /* Slate 50 */
+            --text-muted: #94A3B8;
+            /* Slate 400 */
+            --device-bezel: #1E293B;
+            /* Slate 800 for frame */
+            --device-shadow: rgba(0, 0, 0, 0.55);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-showcase);
+            color: var(--text-main);
+            font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient glowing backgrounds for photorealistic studio lighting */
+        .ambient-glow-1 {
+            position: fixed;
+            top: -20%;
+            left: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .ambient-glow-2 {
+            position: fixed;
+            bottom: -10%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.05) 0%, rgba(245, 158, 11, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ── Header Toolbar ── */
+        .showcase-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-toolbar);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .showcase-header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .brand-logo {
+            font-size: 24px;
+            background: linear-gradient(135deg, #FBBF24, #F59E0B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .brand-text h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
+        }
+
+        .brand-text p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        /* View Selector Controller */
+        .view-controller {
+            display: flex;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 4px;
+            border-radius: 9999px;
+            align-self: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .view-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-btn:hover {
+            color: var(--text-main);
+        }
+
+        .view-btn.active {
+            background: var(--accent-showcase);
+            color: #0F172A;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+        }
+
+        /* Meta Badges */
+        .showcase-info-badges {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .showcase-info-badges::-webkit-scrollbar {
+            display: none;
+        }
+
+        .info-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .info-badge span {
+            color: var(--accent-showcase);
+            font-weight: 700;
+        }
+
+        /* ── Main Showcase Area ── */
+        .showcase-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Showcase Deck Layout (Multi-device view) */
+        .deck-view {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 48px;
+            justify-items: center;
+            align-items: center;
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 1100px) {
+            .deck-view {
+                grid-template-columns: 1.2fr 1fr;
+                gap: 32px;
+            }
+
+            .deck-view-right {
+                display: flex;
+                flex-direction: column;
+                gap: 48px;
+                align-items: center;
+                width: 100%;
+            }
+        }
+
+        /* Animation class */
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Device Frames CSS ── */
+
+        /* 1. Laptop Frame (MacBook Style) */
+        .laptop-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 660px;
+            perspective: 1000px;
+        }
+
+        .laptop-screen {
+            background: #000;
+            border: 14px solid var(--device-bezel);
+            border-bottom: 18px solid var(--device-bezel);
+            border-radius: 16px 16px 0 0;
+            width: 100%;
+            aspect-ratio: 16/10;
+            box-shadow: 0 20px 50px var(--device-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Glossy glare reflection */
+        .laptop-screen::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 45%);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Laptop Camera Dot */
+        .laptop-camera {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: #0c1322;
+            border-radius: 50%;
+            z-index: 15;
+        }
+
+        .laptop-body {
+            width: 114%;
+            height: 12px;
+            background: linear-gradient(to bottom, #E2E8F0, #94A3B8);
+            border-radius: 0 0 16px 16px;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            z-index: 5;
+        }
+
+        .laptop-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: #475569;
+            border-radius: 0 0 6px 6px;
+        }
+
+        /* 2. Tablet Frame (iPad Pro Style) */
+        .tablet-wrapper {
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .tablet-screen {
+            background: #000;
+            border: 16px solid var(--device-bezel);
+            border-radius: 28px;
+            width: 100%;
+            aspect-ratio: 3/4;
+            box-shadow: 0 20px 50px var(--device-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tablet-screen::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 40%);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* 3. Smartphone Frame (iPhone Pro Style) */
+        .phone-wrapper {
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .phone-screen {
+            background: #F9FAFB;
+            border: 11px solid var(--device-bezel);
+            border-radius: 40px;
+            width: 100%;
+            height: 640px;
+            box-shadow: 0 20px 50px var(--device-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* iPhone notch */
+        .phone-notch {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 24px;
+            background: #000;
+            border-radius: 16px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+        }
+
+        /* Camera lens & speaker dot inside notch */
+        .phone-notch-camera {
+            width: 8px;
+            height: 8px;
+            background: #111827;
+            border-radius: 50%;
+        }
+
+        .phone-notch-speaker {
+            width: 40px;
+            height: 3px;
+            background: #374151;
+            border-radius: 2px;
+        }
+
+        /* Phone Screen Gloss */
+        .phone-screen::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 35%);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Status bar mockups inside device screens */
+        .status-bar {
+            height: 22px;
+            background: transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 18px 0;
+            font-size: 11px;
+            font-weight: 600;
+            color: #1F2937;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 15;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .phone-screen .status-bar {
+            top: 8px;
+            padding: 4px 24px 0;
+        }
+
+        .status-icons {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Iframe embed styling */
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #F9FAFB;
+        }
+
+        .laptop-screen iframe {
+            top: 0;
+            height: 100%;
+        }
+
+        .tablet-screen iframe {
+            top: 22px;
+            height: calc(100% - 22px);
+        }
+
+        .phone-screen iframe {
+            top: 0;
+            height: 100%;
+        }
+
+        /* View Mode Filters */
+        .hide-device {
+            display: none !important;
+        }
+
+        .large-device {
+            max-width: 100% !important;
+        }
+
+        .large-device .phone-screen {
+            height: 780px;
+            max-width: 380px;
+            margin: 0 auto;
+        }
+
+        .large-device .tablet-screen {
+            max-width: 768px;
+            margin: 0 auto;
+        }
+
+        .large-device .laptop-screen {
+            max-width: 1024px;
+            margin: 0 auto;
+        }
+
+        .large-device .laptop-body {
+            max-width: 1160px;
+            margin: 0 auto;
+        }
+
+        /* ── Footer ── */
+        .showcase-footer {
+            background: rgba(15, 23, 42, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            z-index: 10;
+        }
+
+        .showcase-footer p span {
+            color: var(--accent-showcase);
+            font-weight: 600;
+        }
+    </style>
 </head>
+
 <body>
-    <div id="app">
-        <!-- App renders here via JavaScript -->
-        <div class="loading-screen">
-            <div class="loading-brand">Krishna's Cafe</div>
-            <div class="loading-spinner"></div>
+
+    <!-- Ambient glowing lights -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- Sticky Showcase Header -->
+    <header class="showcase-header">
+        <div class="header-brand">
+            <div class="brand-logo">🍽️</div>
+            <div class="brand-text">
+                <h1>Krishna's Cafe</h1>
+                <p>Digital QR Menu Interactive Mockup Portfolio</p>
+            </div>
         </div>
-    </div>
-    <script src="js/app.js"></script>
+
+        <!-- View Controls -->
+        <nav class="view-controller">
+            <button class="view-btn active" id="btn-showcase" onclick="switchView('showcase')">
+                <span>🖥️</span> Showcase
+            </button>
+            <button class="view-btn" id="btn-phone" onclick="switchView('phone')">
+                <span>📱</span> Smartphone View
+            </button>
+            <button class="view-btn" id="btn-tablet" onclick="switchView('tablet')">
+                <span>📟</span> Tablet View
+            </button>
+            <button class="view-btn" id="btn-laptop" onclick="switchView('laptop')">
+                <span>💻</span> Laptop View
+            </button>
+        </nav>
+
+        <!-- Dynamic Specs Badges -->
+        <div class="showcase-info-badges">
+            <div class="info-badge">Design: <span>Minimalist Squircle</span></div>
+            <div class="info-badge">Colors: <span>Charcoal, Amber & Off-white</span></div>
+            <div class="info-badge">Header: <span>Glassmorphic Blur</span></div>
+            <div class="info-badge">State: <span>Fully Interactive SPA</span></div>
+        </div>
+    </header>
+
+    <!-- Main Showcase Section -->
+    <main class="showcase-main" id="showcase-area">
+
+        <!-- Showcase Deck container containing devices -->
+        <div class="deck-view fade-in" id="deck-container">
+
+            <!-- Left Side: MacBook Laptop screen -->
+            <div class="laptop-wrapper" id="laptop-node">
+                <div class="laptop-screen">
+                    <div class="laptop-camera"></div>
+                    <!-- Status Bar -->
+                    <div class="status-bar">
+                        <div>9:41 AM</div>
+                        <div class="status-icons">
+                            <span>📶</span>
+                            <span>🔋 100%</span>
+                        </div>
+                    </div>
+                    <!-- Loaded web menu inside MacBook frame -->
+                    <iframe src="menu.html" title="Laptop Menu Mockup"></iframe>
+                </div>
+                <div class="laptop-body">
+                    <div class="laptop-notch"></div>
+                </div>
+            </div>
+
+            <!-- Right Side Stack: iPad Tablet and iPhone Phone -->
+            <div class="deck-view-right" id="right-stack-node">
+
+                <!-- iPad Tablet -->
+                <div class="tablet-wrapper" id="tablet-node">
+                    <div class="tablet-screen">
+                        <!-- Status Bar -->
+                        <div class="status-bar">
+                            <div>9:41 AM</div>
+                            <div class="status-icons">
+                                <span>📶</span>
+                                <span>🔋 100%</span>
+                            </div>
+                        </div>
+                        <iframe src="menu.html" title="Tablet Menu Mockup"></iframe>
+                    </div>
+                </div>
+
+                <!-- iPhone Phone -->
+                <div class="phone-wrapper" id="phone-node">
+                    <div class="phone-screen">
+                        <div class="phone-notch">
+                            <div class="phone-notch-speaker"></div>
+                            <div class="phone-notch-camera"></div>
+                        </div>
+                        <!-- Status Bar -->
+                        <div class="status-bar">
+                            <div>9:41</div>
+                            <div class="status-icons">
+                                <span>📶</span>
+                                <span>🔋 100%</span>
+                            </div>
+                        </div>
+                        <iframe src="menu.html" title="Smartphone Menu Mockup"></iframe>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="showcase-footer">
+        <p>Created by Antigravity AI pair programming. Mockups crafted with <span>pure HTML & CSS</span>. Scroll and
+            click inside any screen to interact with the live menu.</p>
+    </footer>
+
+    <!-- View Switcher Script -->
+    <script>
+        function switchView(mode) {
+            // Update active controller button
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + mode).classList.add('active');
+
+            const deck = document.getElementById('deck-container');
+            const laptop = document.getElementById('laptop-node');
+            const tablet = document.getElementById('tablet-node');
+            const phone = document.getElementById('phone-node');
+            const rightStack = document.getElementById('right-stack-node');
+
+            // Reset classes
+            deck.className = 'deck-view fade-in';
+            laptop.className = 'laptop-wrapper';
+            tablet.className = 'tablet-wrapper';
+            phone.className = 'phone-wrapper';
+            if (rightStack) rightStack.className = 'deck-view-right';
+
+            // Show all nodes initially
+            laptop.style.display = '';
+            tablet.style.display = '';
+            phone.style.display = '';
+            if (rightStack) rightStack.style.display = '';
+
+            // Apply view specific rules
+            if (mode === 'showcase') {
+                // Standard default showcase
+                // Let CSS grids take care of layout
+            } else if (mode === 'phone') {
+                // Hide laptop and tablet, blow up phone
+                laptop.style.display = 'none';
+                tablet.style.display = 'none';
+                if (rightStack) rightStack.style.display = 'block';
+                phone.classList.add('large-device');
+            } else if (mode === 'tablet') {
+                // Hide laptop and phone, blow up tablet
+                laptop.style.display = 'none';
+                phone.style.display = 'none';
+                if (rightStack) rightStack.style.display = 'block';
+                tablet.classList.add('large-device');
+            } else if (mode === 'laptop') {
+                // Hide tablet and phone, blow up laptop
+                tablet.style.display = 'none';
+                phone.style.display = 'none';
+                if (rightStack) rightStack.style.display = 'none';
+                laptop.classList.add('large-device');
+            }
+        }
+    </script>
 </body>
+
 </html>

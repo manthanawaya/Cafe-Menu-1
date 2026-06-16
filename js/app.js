@@ -9,7 +9,7 @@ const dishes = [
   {
     id: "vegetable-maggie",
     name: "Vegetable Maggie",
-    category: "Maggie",
+    category: "Maggi",
     price: 70,
     description: "Maggie noodles tossed with fresh mixed vegetables.",
     detailDescription: "Maggie noodles tossed with fresh mixed vegetables. Made fresh to order with quality ingredients at Krishna's Cafe.",
@@ -26,7 +26,7 @@ const dishes = [
   {
     id: "plain-maggie",
     name: "Plain Maggie",
-    category: "Maggie",
+    category: "Maggi",
     price: 50,
     description: "Classic Maggie noodles in simple masala broth.",
     detailDescription: "Classic Maggie noodles in simple masala broth. Made fresh to order with quality ingredients at Krishna's Cafe.",
@@ -43,7 +43,7 @@ const dishes = [
   {
     id: "masala-maggie",
     name: "Masala Maggie",
-    category: "Maggie",
+    category: "Maggi",
     price: 60,
     description: "Spiced Maggie with extra masala kick.",
     detailDescription: "Spiced Maggie with extra masala kick. Made fresh to order with quality ingredients at Krishna's Cafe.",
@@ -60,7 +60,7 @@ const dishes = [
   {
     id: "double-masala-maggie",
     name: "Double Masala Maggie",
-    category: "Maggie",
+    category: "Maggi",
     price: 70,
     description: "Extra masala for bold, fiery flavour.",
     detailDescription: "Extra masala for bold, fiery flavour. Made fresh to order with quality ingredients at Krishna's Cafe.",
@@ -77,7 +77,7 @@ const dishes = [
   {
     id: "cheese-butter-maggie",
     name: "Cheese Butter Maggie",
-    category: "Maggie",
+    category: "Maggi",
     price: 100,
     description: "Creamy Maggie loaded with cheese and butter.",
     detailDescription: "Creamy Maggie loaded with cheese and butter. Made fresh to order with quality ingredients at Krishna's Cafe.",
@@ -213,7 +213,7 @@ const dishes = [
   {
     id: "masala-sandwich",
     name: "Masala Sandwich",
-    category: "Sandwich",
+    category: "Sandwiches",
     price: 90,
     description: "Grilled sandwich with masala-spiced veggies.",
     detailDescription: "Grilled sandwich with masala-spiced veggies. Made fresh to order with quality ingredients at Krishna's Cafe.",
@@ -230,7 +230,7 @@ const dishes = [
   {
     id: "indori-sandwich",
     name: "Indori Sandwich",
-    category: "Sandwich",
+    category: "Sandwiches",
     price: 100,
     description: "Indori-style sandwich with special bhujia topping.",
     detailDescription: "Indori-style sandwich with special bhujia topping. Made fresh to order with quality ingredients at Krishna's Cafe.",
@@ -247,7 +247,7 @@ const dishes = [
   {
     id: "corn-mayo-sandwich",
     name: "Corn Mayo Sandwich",
-    category: "Sandwich",
+    category: "Sandwiches",
     price: 100,
     description: "Sweet corn and mayo in toasted bread.",
     detailDescription: "Sweet corn and mayo in toasted bread. Made fresh to order with quality ingredients at Krishna's Cafe.",
@@ -264,7 +264,7 @@ const dishes = [
   {
     id: "cheese-chutney-sandwich",
     name: "Cheese Chutney Sandwich",
-    category: "Sandwich",
+    category: "Sandwiches",
     price: 110,
     description: "Melted cheese with tangy green chutney.",
     detailDescription: "Melted cheese with tangy green chutney. Made fresh to order with quality ingredients at Krishna's Cafe.",
@@ -281,7 +281,7 @@ const dishes = [
   {
     id: "masala-cheese-sandwich",
     name: "Masala Cheese Sandwich",
-    category: "Sandwich",
+    category: "Sandwiches",
     price: 110,
     description: "Spiced veggies and cheese, grilled crisp.",
     detailDescription: "Spiced veggies and cheese, grilled crisp. Made fresh to order with quality ingredients at Krishna's Cafe.",
@@ -298,7 +298,7 @@ const dishes = [
   {
     id: "vegetable-sandwich",
     name: "Vegetable Sandwich",
-    category: "Sandwich",
+    category: "Sandwiches",
     price: 100,
     description: "Fresh seasonal vegetables in a grilled sandwich.",
     detailDescription: "Fresh seasonal vegetables in a grilled sandwich. Made fresh to order with quality ingredients at Krishna's Cafe.",
@@ -656,7 +656,7 @@ const dishes = [
 
 // --------------- CATEGORIES ---------------
 
-const categories = ["All", "Maggie", "French Fries", "Momos", "Sandwich", "Chole Bhature", "Rice & Pulao", "Chinese"];
+const categories = ["All", "Maggi", "French Fries", "Momos", "Sandwiches", "Chole Bhature", "Rice & Pulao", "Chinese"];
 
 // --------------- DEFAULT RATINGS ---------------
 
@@ -712,7 +712,7 @@ const LIST_LAYOUT_QUERY = window.matchMedia('(max-width: 767px)');
 let listLayout = LIST_LAYOUT_QUERY.matches;
 
 function usesListLayout() {
-  return LIST_LAYOUT_QUERY.matches;
+  return true; // Enforce list layout view across devices to match mockup specifications
 }
 
 // --------------- RATINGS HELPERS ---------------
@@ -979,6 +979,8 @@ function buildDishCards(list) {
   let html = '';
   list.forEach(dish => {
     const { average, count } = getAverageRating(dish.id);
+    const isVeg = dish.tags.includes('V');
+    const vegDot = isVeg ? '<span class="veg-indicator" title="Vegetarian"></span>' : '';
     if (listLayout) {
       html += `
       <div class="menu-item" data-id="${dish.id}">
@@ -987,7 +989,7 @@ function buildDishCards(list) {
           ${dish.label ? `<span class="dish-label ${labelClass(dish.label)}">${dish.label}</span>` : ''}
         </div>
         <div class="menu-item-info">
-          <h3 class="dish-name">${dish.name}</h3>
+          <h3 class="dish-name">${vegDot}${dish.name}</h3>
           <p class="dish-desc">${dish.description}</p>
           <div class="dish-meta">
             <span class="dish-price">₹${dish.price}</span>
@@ -1006,7 +1008,7 @@ function buildDishCards(list) {
           ${dish.label ? `<span class="dish-label ${labelClass(dish.label)}">${dish.label}</span>` : ''}
         </div>
         <div class="card-body">
-          <h3 class="dish-name">${dish.name}</h3>
+          <h3 class="dish-name">${vegDot}${dish.name}</h3>
           <p class="dish-desc">${dish.description}</p>
           <div class="dish-meta">
             <span class="dish-price">₹${dish.price}</span>
