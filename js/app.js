@@ -651,12 +651,29 @@ const dishes = [
       { type: "SEASONING", name: "Soy & Chilli", desc: "Soy sauce, vinegar and chilli for that street-style kick." },
       { type: "FINISH", name: "Spring Onion", desc: "Garnished with spring onion greens and sesame." },
     ]
+  },
+  {
+    id: "pav-bhaji",
+    name: "Pav Bhaji",
+    category: "Pav Bhaji",
+    price: 110,
+    description: "Classic butter-toasted pav with spicy mixed vegetable bhaji.",
+    detailDescription: "Classic butter-toasted pav with spicy mixed vegetable bhaji. Made fresh to order with quality ingredients at Krishna's Cafe.",
+    image: "images/pav_bhaji.png",
+    tags: ["V"],
+    label: "SIGNATURE DISH",
+    components: [
+      { type: "BASE", name: "Pav", desc: "Soft, golden-brown bread rolls toasted with butter on the griddle." },
+      { type: "CORE", name: "Bhaji", desc: "Mashed vegetable curry prepared with potatoes, peas, tomatoes, and unique spice blend." },
+      { type: "SEASONING", name: "Pav Bhaji Masala", desc: "Special aromatic spice blend for that street-style authentic kick." },
+      { type: "FINISH", name: "Butter & Lemon", desc: "Topped with a generous dollop of butter, chopped onions, fresh coriander, and a slice of lemon." },
+    ]
   }
 ];
 
 // --------------- CATEGORIES ---------------
 
-const categories = ["All", "Maggi", "French Fries", "Momos", "Sandwiches", "Chole Bhature", "Rice & Pulao", "Chinese"];
+const categories = ["All", "Maggi", "French Fries", "Momos", "Sandwiches", "Chole Bhature", "Pav Bhaji", "Rice & Pulao", "Chinese"];
 
 // --------------- DEFAULT RATINGS ---------------
 
@@ -699,6 +716,7 @@ const defaultRatings = {
   "manchurian-dry": { total: 116, count: 27 },
   "manchurian-gravy": { total: 92, count: 20 },
   "chilli-paneer": { total: 158, count: 36 },
+  "pav-bhaji": { total: 188, count: 42 },
 };
 
 // --------------- APP STATE ---------------
